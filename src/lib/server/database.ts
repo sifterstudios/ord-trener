@@ -34,6 +34,14 @@ export function initializeDatabase() {
         FOREIGN KEY (word2_id) REFERENCES words(id) ON DELETE CASCADE
     );
     `);
+    db.exec(`
+    CREATE TABLE IF NOT EXISTS high_score (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        name TEXT NOT NULL,
+        score INTEGER,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    );
+    `);
 }
 
 
@@ -74,14 +82,19 @@ export function analyzeWords() {
 
     const words = db.prepare('SELECT id, word, length FROM words ORDER BY length').all() as Word[];
 
+    let currentLength = 0;
     // Loop through words and compute similarities
     for (let i = 0; i < words.length; i++) {
+        if (words[i].length !== currentLength) {
+            const progress = Math.round((i / words.length) * 100);
+            console.log('Analyzing words of length', words[i].length, 'progress:', progress + '%');
+            currentLength = words[i].length;
+        }
         for (let j = i + 1; j < words.length; j++) {
             if (Math.abs(words[i].length - words[j].length) > 1) break; // Skip if lengths differ significantly
 
             const wordDistance = distance(words[i].word, words[j].word);
             if (wordDistance <= 2) { // Adjust threshold based on similarity you want
-                console.log('Inserting similarity between', words[i].word, 'and', words[j].word, 'with distance', wordDistance);
                 insertSimilarity.run(words[i].id, words[j].id, wordDistance);
             }
         }
