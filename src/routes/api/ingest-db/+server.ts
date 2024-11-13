@@ -1,5 +1,5 @@
 import type {RequestHandler} from '@sveltejs/kit'
-import {initializeDatabase, ingestWords, analyzeWords} from "$lib/database";
+import {initializeDatabase, ingestWords, analyzeWords} from "$lib/server/database";
 
 export const POST: RequestHandler = async () => {
     initializeDatabase();

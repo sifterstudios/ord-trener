@@ -24,3 +24,5 @@ symlink-from
 # Database
 /ord.sqlite3
 /ord.sqlite3-journal
+/ord.sqlite3-shm
+/ord.sqlite3-wal

@@ -1,6 +1,7 @@
 import {distance} from "fastest-levenshtein";
 import Database from 'better-sqlite3';
 import fs from 'fs';
+import type {Word, WordSimilarity} from "$lib/server/types";
 
 const db = new Database('ord.sqlite3');
 
@@ -8,14 +9,10 @@ interface WordCount {
     count: number;
 }
 
-export interface Word {
-    id: number;
-    word: string;
-    length: number;
-}
 
 export function initializeDatabase() {
     console.log('Initializing database');
+    db.pragma('journal_mode = FULL');
     db.exec(`
     CREATE TABLE IF NOT EXISTS words (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -39,7 +36,7 @@ export function initializeDatabase() {
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         name TEXT NOT NULL,
         score INTEGER,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     `);
 }
@@ -70,6 +67,9 @@ export function analyzeWords() {
     const insertSimilarity = db.prepare(`
   INSERT OR IGNORE INTO word_similarity (word1_id, word2_id, distance) VALUES (?, ?, ?)
 `);
+
+
+
     // start a timer, so I can see how long it takes
     console.time('analyzeWords');
 
@@ -81,6 +81,7 @@ export function analyzeWords() {
     }
 
     const words = db.prepare('SELECT id, word, length FROM words ORDER BY length').all() as Word[];
+    const wordSimilarities : WordSimilarity[] = [];
 
     let currentLength = 0;
     // Loop through words and compute similarities
@@ -95,11 +96,16 @@ export function analyzeWords() {
 
             const wordDistance = distance(words[i].word, words[j].word);
             if (wordDistance <= 2) { // Adjust threshold based on similarity you want
-                insertSimilarity.run(words[i].id, words[j].id, wordDistance);
+                wordSimilarities.push({word1_id: words[i].id, word2_id: words[j].id, distance: wordDistance});
             }
         }
     }
+    console.log('Inserting', wordSimilarities.length, 'similarities to database');
+    wordSimilarities.forEach(similarity => {
+        insertSimilarity.run(similarity.word1_id, similarity.word2_id, similarity.distance);
+    })
     console.timeEnd('analyzeWords');
+    db.pragma('journal_mode = WAL');
 }
 
 

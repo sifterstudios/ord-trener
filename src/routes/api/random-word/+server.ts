@@ -1,4 +1,4 @@
-import {db, type Word} from "$lib/database";
+import {db, type Word} from "$lib/server/database";
 
 export const GET = async () => {
     const randomWord : Word = db.prepare('SELECT id, word FROM words ORDER BY RANDOM() LIMIT 1').get() as Word;
