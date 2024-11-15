@@ -1,4 +1,5 @@
 <script>
+  import { ModeWatcher } from "mode-watcher";
   import { Button } from "../button";
 
   const links = [
@@ -6,6 +7,9 @@
     { href: "/high-score", text: "High-score" },
     { href: "/about", text: "Om" },
   ];
+  import Sun from "svelte-radix/Sun.svelte";
+  import Moon from "svelte-radix/Moon.svelte";
+  import { toggleMode } from "mode-watcher";
 </script>
 
 <nav class="bg-primary">
@@ -16,6 +20,16 @@
       <img src="logo.png" class="h-8" alt="Ord-trener logo" />
     </a>
     <div class="flex md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse">
+      <ModeWatcher />
+      <Button on:click={toggleMode} variant="outline" size="icon">
+        <Sun
+          class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"
+        />
+        <Moon
+          class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"
+        />
+        <span class="sr-only">Toggle theme</span>
+      </Button>
       <Button variant="secondary" type="button"
         ><i class="fab fa-github mr-1"></i> Github</Button
       >

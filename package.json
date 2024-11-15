@@ -49,6 +49,8 @@
 	"dependencies": {
 		"better-sqlite3": "^11.5.0",
 		"fastest-levenshtein": "^1.0.16",
-		"svelte-icons": "^2.1.0"
+		"mode-watcher": "^0.4.1",
+		"svelte-icons": "^2.1.0",
+		"svelte-radix": "^2.0.1"
 	}
 }
