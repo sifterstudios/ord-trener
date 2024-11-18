@@ -1,6 +1,7 @@
 <script lang="ts">
   import { goto } from "$app/navigation";
   import Button from "$lib/components/ui/button/button.svelte";
+  import LevelProgressBar from "$lib/components/ui/level-progress-bar/level-progress-bar.svelte";
   import type { PageData } from "./$types";
   import { Confetti } from "svelte-confetti";
 
@@ -36,6 +37,10 @@
   countdownCorrectWordVisibility(2000);
 </script>
 
+<div class="absolute top-20 left-0 w-full">
+  <LevelProgressBar currentScore={50} maxProgressCurrentLevel={100} />
+</div>
+
 {#if state.showCorrectWord}
   <div>
     <h1 class="text-7xl text-center">
@@ -60,7 +65,7 @@
     {/each}
   </div>
 {/if}
-<!-- Feedback message -->
+
 {#if state.feedback === "Correct!"}
   <Confetti cone amount="200" />
 {/if}
