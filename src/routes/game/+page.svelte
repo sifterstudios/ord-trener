@@ -1,6 +1,7 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import Button from "$lib/components/ui/button/button.svelte";
+
   function handleChoice(selectedWord: string) {
     if (selectedWord === data.correctWord) {
       data.feedback = "Correct!";
@@ -15,22 +16,27 @@
   let { data }: { data: PageData } = $props();
 </script>
 
-<Button variant="secondary">{data.correctWord}</Button>
-
 <div style="visibility: {data.feedback ? 'hidden' : 'visible'}">
-  {data.correctWord}
+  <h1 class="text-9xl">{data.correctWord}</h1>
 </div>
 
 <!-- Alternatives -->
-{#each data.alternatives as altWord}
-  <Button variant="outline" onclick={() => handleChoice(altWord)}>
-    {altWord}
-  </Button>
-{/each}
-
+<div
+  class="w-full h-full flex grid-cols-2 md:grid md:grid-cols-4 gap-2 md:gap-0"
+>
+  {#each data.alternatives as altWord}
+    <Button
+      variant="outline"
+      class="flex items-center justify-center h-16 md:h-full"
+      onclick={() => handleChoice(altWord)}
+    >
+      {altWord}
+    </Button>
+  {/each}
+</div>
 <!-- Feedback message -->
 {#if data.feedback}
-  <p class="text-primary-foreground">
+  <p class="">
     {data.feedback}
   </p>
 {/if}

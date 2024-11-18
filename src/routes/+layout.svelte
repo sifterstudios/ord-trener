@@ -11,8 +11,12 @@
 />
 <div class="flex flex-col min-h-screen">
   <Navbar />
-  <main class="bg-primary flex-grow container mx-auto p-4">
-    {@render children()}
+  <main
+    class="flex-grow container mx-auto p-4 flex items-center justify-center"
+  >
+    <div class="flex flex-col gap-4 w-full max-w-4xl">
+      {@render children()}
+    </div>
   </main>
   <Footer />
 </div>
