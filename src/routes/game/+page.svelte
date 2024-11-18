@@ -2,6 +2,7 @@
   import { goto } from "$app/navigation";
   import Button from "$lib/components/ui/button/button.svelte";
   import type { PageData } from "./$types";
+  import { Confetti } from "svelte-confetti";
 
   let { data }: { data: PageData } = $props();
   let state = $state({
@@ -13,7 +14,7 @@
   function countdownCorrectWordVisibility(timeout: number) {
     setTimeout(() => {
       state.showCorrectWord = false;
-    }, timeout); // 2 seconds (adjust as needed)
+    }, timeout);
   }
   function handleChoice(selectedWord: string) {
     if (selectedWord === state.correctWord) {
@@ -22,9 +23,8 @@
       state.feedback = "Incorrect!";
     }
     setTimeout(async () => {
-      // Load a new word
       console.log("Loading a new word");
-      await goto(window.location.pathname, { invalidateAll: true });
+      await goto(window.location.pathname, { invalidateAll: true }); // trigger the load() function server-side
       state.correctWord = data.correctWord;
       state.alternatives = data.alternatives;
       state.feedback = "";
@@ -36,30 +36,31 @@
   countdownCorrectWordVisibility(2000);
 </script>
 
-<div style="visibility: {state.showCorrectWord ? 'visible' : 'hidden'}">
-  <h1 class="text-7xl text-center">
-    {state.correctWord}
-  </h1>
-</div>
+{#if state.showCorrectWord}
+  <div>
+    <h1 class="text-7xl text-center">
+      {state.correctWord}
+    </h1>
+  </div>
+{/if}
 
 <!-- Alternatives -->
-<div
-  class="w-full h-full flex grid-cols-2 md:grid md:grid-cols-4 gap-2 md:gap-0"
-  style="visibility: {state.showCorrectWord ? 'hidden' : 'visible'}"
->
-  {#each state.alternatives as altWord}
-    <Button
-      variant="outline"
-      class="flex items-center justify-center h-16 md:h-full"
-      onclick={() => handleChoice(altWord)}
-    >
-      {altWord}
-    </Button>
-  {/each}
-</div>
+{#if !state.showCorrectWord}
+  <div
+    class="w-full h-full flex grid-cols-2 md:grid md:grid-cols-4 gap-2 md:gap-0"
+  >
+    {#each state.alternatives as altWord}
+      <Button
+        variant="outline"
+        class="flex items-center justify-center h-16 md:h-full"
+        onclick={() => handleChoice(altWord)}
+      >
+        {altWord}
+      </Button>
+    {/each}
+  </div>
+{/if}
 <!-- Feedback message -->
-{#if state.feedback}
-  <p class="">
-    {state.feedback}
-  </p>
+{#if state.feedback === "Correct!"}
+  <Confetti cone amount="200" />
 {/if}
