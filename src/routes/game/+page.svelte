@@ -1,30 +1,41 @@
 <script lang="ts">
   import type { PageData } from "./$types";
   import Button from "$lib/components/ui/button/button.svelte";
-
-  function handleChoice(selectedWord: string) {
-    if (selectedWord === data.correctWord) {
-      data.feedback = "Correct!";
-    } else {
-      data.feedback = "Incorrect!";
-    }
-    setTimeout(() => {
-      // Load a new word
-    }, 1500);
-  }
+  import { goto, invalidate, replaceState } from "$app/navigation";
 
   let { data }: { data: PageData } = $props();
+  let state = $state({
+    correctWord: data.correctWord,
+    alternatives: data.alternatives,
+    feedback: data.feedback,
+  });
+
+  function handleChoice(selectedWord: string) {
+    if (selectedWord === state.correctWord) {
+      state.feedback = "Correct!";
+    } else {
+      state.feedback = "Incorrect!";
+    }
+    setTimeout(async () => {
+      // Load a new word
+      console.log("Loading a new word");
+      await goto(window.location.pathname, { invalidateAll: true });
+      state.correctWord = data.correctWord;
+      state.alternatives = data.alternatives;
+      state.feedback = "";
+    }, 1500);
+  }
 </script>
 
-<div style="visibility: {data.feedback ? 'hidden' : 'visible'}">
-  <h1 class="text-9xl">{data.correctWord}</h1>
+<div style="visibility: {state.feedback ? 'hidden' : 'visible'}">
+  <h1 class="text-9xl">{state.correctWord}</h1>
 </div>
 
 <!-- Alternatives -->
 <div
   class="w-full h-full flex grid-cols-2 md:grid md:grid-cols-4 gap-2 md:gap-0"
 >
-  {#each data.alternatives as altWord}
+  {#each state.alternatives as altWord}
     <Button
       variant="outline"
       class="flex items-center justify-center h-16 md:h-full"
@@ -35,8 +46,8 @@
   {/each}
 </div>
 <!-- Feedback message -->
-{#if data.feedback}
+{#if state.feedback}
   <p class="">
-    {data.feedback}
+    {state.feedback}
   </p>
 {/if}
