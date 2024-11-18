@@ -3,5 +3,10 @@
 </script>
 
 <div class="items-center">
-  <PlayCircle style="font-size:10em" />
+  <a href="/game">
+    <PlayCircle
+      class="buzz text-secondary-foreground flex justify-self-center"
+      style="font-size:20em"
+    />
+  </a>
 </div>

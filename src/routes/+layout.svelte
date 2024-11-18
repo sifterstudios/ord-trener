@@ -20,3 +20,6 @@
   </main>
   <Footer />
 </div>
+
+<style>
+</style>
