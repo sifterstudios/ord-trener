@@ -1,15 +1,20 @@
 <script lang="ts">
-  import type { PageData } from "./$types";
+  import { goto } from "$app/navigation";
   import Button from "$lib/components/ui/button/button.svelte";
-  import { goto, invalidate, replaceState } from "$app/navigation";
+  import type { PageData } from "./$types";
 
   let { data }: { data: PageData } = $props();
   let state = $state({
     correctWord: data.correctWord,
     alternatives: data.alternatives,
     feedback: data.feedback,
+    showCorrectWord: true,
   });
-
+  function countdownCorrectWordVisibility(timeout: number) {
+    setTimeout(() => {
+      state.showCorrectWord = false;
+    }, timeout); // 2 seconds (adjust as needed)
+  }
   function handleChoice(selectedWord: string) {
     if (selectedWord === state.correctWord) {
       state.feedback = "Correct!";
@@ -23,17 +28,24 @@
       state.correctWord = data.correctWord;
       state.alternatives = data.alternatives;
       state.feedback = "";
-    }, 1500);
+      state.showCorrectWord = true;
+      countdownCorrectWordVisibility(2000);
+    }, 1);
   }
+
+  countdownCorrectWordVisibility(2000);
 </script>
 
-<div style="visibility: {state.feedback ? 'hidden' : 'visible'}">
-  <h1 class="text-9xl">{state.correctWord}</h1>
+<div style="visibility: {state.showCorrectWord ? 'visible' : 'hidden'}">
+  <h1 class="text-7xl text-center">
+    {state.correctWord}
+  </h1>
 </div>
 
 <!-- Alternatives -->
 <div
   class="w-full h-full flex grid-cols-2 md:grid md:grid-cols-4 gap-2 md:gap-0"
+  style="visibility: {state.showCorrectWord ? 'hidden' : 'visible'}"
 >
   {#each state.alternatives as altWord}
     <Button
