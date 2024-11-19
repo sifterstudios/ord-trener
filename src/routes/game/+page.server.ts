@@ -10,6 +10,7 @@ export const load: PageServerLoad = async () => {
     alternatives: data.alternatives,
     feedback: "",
   };
+
   async function ingestWords() {
     const response = await fetch("http://localhost:5173/api/ingest-db", {
       method: "POST",

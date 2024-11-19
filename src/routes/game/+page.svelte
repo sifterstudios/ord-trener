@@ -1,9 +1,9 @@
 <script lang="ts">
-  import { goto } from "$app/navigation";
-  import Button from "$lib/components/ui/button/button.svelte";
+  import GameWindow from "$lib/components/ui/game-window/game-window.svelte";
   import LevelProgressBar from "$lib/components/ui/level-progress-bar/level-progress-bar.svelte";
   import type { PageData } from "./$types";
   import { Confetti } from "svelte-confetti";
+  import { highScore } from "./level-calculation.svelte";
 
   let { data }: { data: PageData } = $props();
   let state = $state({
@@ -12,60 +12,71 @@
     feedback: data.feedback,
     showCorrectWord: true,
   });
+
+  let currentScore = $state(0);
+  let currentLevel = $state(0);
+  let maxProgressCurrentLevel = $state(
+    highScore.getNextLevelScore(currentLevel),
+  );
+  let amountOfLives = $state(3);
+
   function countdownCorrectWordVisibility(timeout: number) {
     setTimeout(() => {
       state.showCorrectWord = false;
     }, timeout);
   }
-  function handleChoice(selectedWord: string) {
-    if (selectedWord === state.correctWord) {
+
+  function handleChoice(
+    event: CustomEvent<{ choice: string; x: number; y: number }>,
+  ) {
+    if (event.detail.choice === state.correctWord) {
+      currentScore += highScore.calculateHighScore(currentLevel, 3);
+      console.log("currentScore", currentScore);
+
+      if (currentScore >= maxProgressCurrentLevel) {
+        currentLevel++;
+        maxProgressCurrentLevel = highScore.getNextLevelScore(currentLevel);
+      }
+
       state.feedback = "Correct!";
     } else {
+      amountOfLives--;
       state.feedback = "Incorrect!";
     }
     setTimeout(async () => {
-      console.log("Loading a new word");
-      await goto(window.location.pathname, { invalidateAll: true }); // trigger the load() function server-side
-      state.correctWord = data.correctWord;
-      state.alternatives = data.alternatives;
-      state.feedback = "";
+      const response = await fetch("http://localhost:5173/api/random-word");
+
+      state = await response.json();
       state.showCorrectWord = true;
+      state.feedback = "";
+      // start timer
+
       countdownCorrectWordVisibility(2000);
-    }, 1);
+    }, 1000);
   }
 
+  // Countdown for the first word
   countdownCorrectWordVisibility(2000);
 </script>
 
 <div class="absolute top-20 left-0 w-full">
-  <LevelProgressBar currentScore={50} maxProgressCurrentLevel={100} />
+  <LevelProgressBar {currentLevel} {currentScore} {maxProgressCurrentLevel} />
 </div>
 
-{#if state.showCorrectWord}
-  <div>
-    <h1 class="text-7xl text-center">
-      {state.correctWord}
-    </h1>
-  </div>
-{/if}
-
-<!-- Alternatives -->
-{#if !state.showCorrectWord}
-  <div
-    class="w-full h-full flex grid-cols-2 md:grid md:grid-cols-4 gap-2 md:gap-0"
-  >
-    {#each state.alternatives as altWord}
-      <Button
-        variant="outline"
-        class="flex items-center justify-center h-16 md:h-full"
-        onclick={() => handleChoice(altWord)}
-      >
-        {altWord}
-      </Button>
-    {/each}
-  </div>
-{/if}
+<GameWindow
+  correctWord={state.correctWord}
+  alternatives={state.alternatives}
+  feedback={state.feedback}
+  showCorrectWord={state.showCorrectWord}
+  on:choice={handleChoice}
+/>
 
 {#if state.feedback === "Correct!"}
-  <Confetti cone amount="200" />
+  <div
+    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+  >
+    <Confetti x={[-0.5, 0.5]} />
+    <Confetti amount="10" x={[-0.75, -0.3]} y={[0.15, 0.75]} />
+    <Confetti amount="10" x={[0.3, 0.75]} y={[0.15, 0.75]} />
+  </div>
 {/if}
