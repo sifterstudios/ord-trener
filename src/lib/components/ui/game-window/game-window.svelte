@@ -35,7 +35,9 @@
       {#each alternatives as altWord}
         <Button
           variant="outline"
-          class="flex justify-center h-16 md:h-full {altWord === correctWord
+          disabled
+          class="disabled:text-white flex justify-center h-16 md:h-full {altWord ===
+          correctWord
             ? 'bg-green-600'
             : 'bg-gray-900'}"
           onclick={() => sendChoice(altWord)}

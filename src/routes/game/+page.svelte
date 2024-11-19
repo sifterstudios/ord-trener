@@ -3,7 +3,9 @@
   import LevelProgressBar from "$lib/components/ui/level-progress-bar/level-progress-bar.svelte";
   import type { PageData } from "./$types";
   import { Confetti } from "svelte-confetti";
-  import { highScore } from "./level-calculation.svelte";
+  import { highScore } from "./high-score.svelte";
+  import { timer, startTimer, resetTimer } from "./timer.svelte";
+  import HealthBar from "$lib/components/ui/health-bar/health-bar.svelte";
 
   let { data }: { data: PageData } = $props();
   let state = $state({
@@ -23,6 +25,8 @@
   function countdownCorrectWordVisibility(timeout: number) {
     setTimeout(() => {
       state.showCorrectWord = false;
+      resetTimer();
+      startTimer();
     }, timeout);
   }
 
@@ -30,8 +34,8 @@
     event: CustomEvent<{ choice: string; x: number; y: number }>,
   ) {
     if (event.detail.choice === state.correctWord) {
-      currentScore += highScore.calculateHighScore(currentLevel, 3);
-      console.log("currentScore", currentScore);
+      currentScore += highScore.calculateHighScore(currentLevel, timer);
+      console.log("timer", timer);
 
       if (currentScore >= maxProgressCurrentLevel) {
         currentLevel++;
@@ -62,6 +66,8 @@
 <div class="absolute top-20 left-0 w-full">
   <LevelProgressBar {currentLevel} {currentScore} {maxProgressCurrentLevel} />
 </div>
+
+<HealthBar {amountOfLives} />
 
 <GameWindow
   correctWord={state.correctWord}

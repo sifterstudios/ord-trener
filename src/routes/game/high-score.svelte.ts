@@ -18,19 +18,21 @@ class HighScore {
   calculateHighScore(level: number, timeTaken: number): number {
     const clampedTime = Math.min(timeTaken, this.maxTime);
 
-    // Ensure levelMultiplier is non-zero even for level 0
-    const levelMultiplier =
-      level === 0
-        ? this.levelScaleFactor * 0.3 // Arbitrary base multiplier for level 0
-        : Math.log10(level + 1) * this.levelScaleFactor;
+    const levelMultiplier = Math.pow(1.5, level + 1) * this.levelScaleFactor;
 
     const timeMultiplier = Math.max(0.1, 1 - clampedTime / this.maxTime);
 
-    return Math.floor(this.baseScore * levelMultiplier * timeMultiplier);
+    console.log(
+      "HighScore.calculateHighScore",
+      this.baseScore,
+      levelMultiplier,
+      timeMultiplier,
+    );
+    return Math.floor((this.baseScore * levelMultiplier) / timeMultiplier);
   }
   getNextLevelScore(currentLevel: number): number {
     const nextLevelMultiplier =
-      Math.log10(currentLevel + 5) * this.levelScaleFactor;
+      Math.pow(2.5, currentLevel + 1) * this.levelScaleFactor;
 
     const maxTimeMultiplier = 1;
 
@@ -39,7 +41,7 @@ class HighScore {
 }
 
 export const highScore = new HighScore({
-  baseScore: 100,
-  levelScaleFactor: 50,
-  maxTime: 5,
+  baseScore: 78,
+  levelScaleFactor: 30,
+  maxTime: 500,
 });
