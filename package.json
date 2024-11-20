@@ -24,6 +24,7 @@
 		"@tailwindcss/typography": "^0.5.15",
 		"@types/better-sqlite3": "^7.6.11",
 		"@types/eslint": "^9.6.0",
+		"@types/validator": "^13.12.2",
 		"autoprefixer": "^10.4.20",
 		"bits-ui": "^0.21.16",
 		"clsx": "^2.1.1",
@@ -49,9 +50,12 @@
 	},
 	"dependencies": {
 		"better-sqlite3": "^11.5.0",
+		"date-fns": "^4.1.0",
+		"dayjs": "^1.11.13",
 		"fastest-levenshtein": "^1.0.16",
 		"mode-watcher": "^0.4.1",
 		"svelte-icons": "^2.1.0",
-		"svelte-radix": "^2.0.1"
+		"svelte-radix": "^2.0.1",
+		"validator": "^13.12.0"
 	}
 }

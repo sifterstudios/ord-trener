@@ -134,4 +134,3 @@ export function analyzeWords() {
 }
 
 export { db, type Word };
-
