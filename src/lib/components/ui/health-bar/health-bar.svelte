@@ -8,9 +8,9 @@
 <div class="absolute flex top-24 p-2 self-center">
   {#each Array.from({ length: maxLives }, (_, i) => i) as life}
     {#if life < amountOfLives}
-      <HeartFilled size="40" color="red" />
+      <HeartFilled size="35" color="red" />
     {:else}
-      <Heart size="40" color="red" />
+      <Heart size="35" color="white" />
     {/if}
   {/each}
 </div>

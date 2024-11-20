@@ -6,6 +6,7 @@
   import { highScore } from "./high-score.svelte";
   import { timer, startTimer, resetTimer } from "./timer.svelte";
   import HealthBar from "$lib/components/ui/health-bar/health-bar.svelte";
+  import { goto } from "$app/navigation";
 
   let { data }: { data: PageData } = $props();
   let state = $state({
@@ -28,6 +29,13 @@
       resetTimer();
       startTimer();
     }, timeout);
+  }
+
+  function resetGame() {
+    amountOfLives = 3;
+    currentScore = 0;
+    currentLevel = 0;
+    goto("/game");
   }
 
   function handleChoice(
@@ -63,26 +71,30 @@
   countdownCorrectWordVisibility(2000);
 </script>
 
-<div class="absolute top-20 left-0 w-full">
-  <LevelProgressBar {currentLevel} {currentScore} {maxProgressCurrentLevel} />
-</div>
-
-<HealthBar {amountOfLives} />
-
-<GameWindow
-  correctWord={state.correctWord}
-  alternatives={state.alternatives}
-  feedback={state.feedback}
-  showCorrectWord={state.showCorrectWord}
-  on:choice={handleChoice}
-/>
-
-{#if state.feedback === "Correct!"}
-  <div
-    class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
-  >
-    <Confetti x={[-0.5, 0.5]} />
-    <Confetti amount="10" x={[-0.75, -0.3]} y={[0.15, 0.75]} />
-    <Confetti amount="10" x={[0.3, 0.75]} y={[0.15, 0.75]} />
+{#if amountOfLives === 0}
+  <div class=""></div>
+{:else}
+  <div class="absolute top-20 left-0 w-full">
+    <LevelProgressBar {currentLevel} {currentScore} {maxProgressCurrentLevel} />
   </div>
+
+  <HealthBar {amountOfLives} />
+
+  <GameWindow
+    correctWord={state.correctWord}
+    alternatives={state.alternatives}
+    feedback={state.feedback}
+    showCorrectWord={state.showCorrectWord}
+    on:choice={handleChoice}
+  />
+
+  {#if state.feedback === "Correct!"}
+    <div
+      class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+    >
+      <Confetti x={[-0.5, 0.5]} />
+      <Confetti amount="10" x={[-0.75, -0.3]} y={[0.15, 0.75]} />
+      <Confetti amount="10" x={[0.3, 0.75]} y={[0.15, 0.75]} />
+    </div>
+  {/if}
 {/if}
