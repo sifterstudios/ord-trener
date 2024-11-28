@@ -1,68 +1,38 @@
-<script>
+<script lang="ts">
   import * as Table from "$lib/components/ui/table";
-  const invoices = [
-    {
-      invoice: "INV001",
-      paymentStatus: "Paid",
-      totalAmount: "$250.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV002",
-      paymentStatus: "Pending",
-      totalAmount: "$150.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV003",
-      paymentStatus: "Unpaid",
-      totalAmount: "$350.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV004",
-      paymentStatus: "Paid",
-      totalAmount: "$450.00",
-      paymentMethod: "Credit Card",
-    },
-    {
-      invoice: "INV005",
-      paymentStatus: "Paid",
-      totalAmount: "$550.00",
-      paymentMethod: "PayPal",
-    },
-    {
-      invoice: "INV006",
-      paymentStatus: "Pending",
-      totalAmount: "$200.00",
-      paymentMethod: "Bank Transfer",
-    },
-    {
-      invoice: "INV007",
-      paymentStatus: "Unpaid",
-      totalAmount: "$300.00",
-      paymentMethod: "Credit Card",
-    },
-  ];
+  import type { PageLoad } from "./$types";
+  import type { HighScoreEntry } from "$lib/server/types";
+
+  export const load: PageLoad = async ({ fetch }) => {
+    const amount = 10;
+    const page = 1;
+
+    const res = await fetch(`/high-scores?amount=${amount}&page=${page}`);
+    if (!res.ok) {
+      console.error("Failed to fetch high scores");
+      return { highScores: [] };
+    }
+
+    const highScores: HighScoreEntry[] = await res.json();
+    return { highScores };
+  };
 </script>
 
 <Table.Root>
   <Table.Caption>A list of your recent invoices.</Table.Caption>
   <Table.Header>
     <Table.Row>
-      <Table.Head class="w-[100px]">Invoice</Table.Head>
-      <Table.Head>Status</Table.Head>
-      <Table.Head>Method</Table.Head>
-      <Table.Head class="text-right">Amount</Table.Head>
+      <Table.Head class="w-[100px]">Name</Table.Head>
+      <Table.Head>Score</Table.Head>
+      <Table.Head class="text-right">When</Table.Head>
     </Table.Row>
   </Table.Header>
   <Table.Body>
-    {#each invoices as invoice, i (i)}
+    {#each highScores as score, i (i)}
       <Table.Row>
-        <Table.Cell class="font-medium">{invoice.invoice}</Table.Cell>
-        <Table.Cell>{invoice.paymentStatus}</Table.Cell>
-        <Table.Cell>{invoice.paymentMethod}</Table.Cell>
-        <Table.Cell class="text-right">{invoice.totalAmount}</Table.Cell>
+        <Table.Cell class="font-medium">{score.name}</Table.Cell>
+        <Table.Cell>{score.score}</Table.Cell>
+        <Table.Cell class="text-right">{score.when}</Table.Cell>
       </Table.Row>
     {/each}
   </Table.Body>

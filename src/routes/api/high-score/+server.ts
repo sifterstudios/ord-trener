@@ -1,4 +1,3 @@
-import { page } from "$app/stores";
 import { db } from "$lib/server/database";
 import type { HighScoreEntry } from "$lib/server/types";
 import { json, type RequestHandler } from "@sveltejs/kit";
@@ -25,8 +24,10 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
   );
 };
 
-export const GET: RequestHandler = async ({ request }) => {
-  const { amount, page } = await request.json();
+export const GET: RequestHandler = async ({ url }) => {
+  const amount = parseInt(url.searchParams.get("amount") || "10", 10);
+  const page = parseInt(url.searchParams.get("page") || "1", 10);
+
   const highScores = db
     .prepare(
       `
@@ -34,8 +35,9 @@ export const GET: RequestHandler = async ({ request }) => {
       FROM high_score
       ORDER BY score DESC
       LIMIT ? OFFSET ?
-      `,
+    `,
     )
-    .all(amount, amount * (page * amount - 1 * amount)) as HighScoreEntry[];
+    .all(amount, (page - 1) * amount) as HighScoreEntry[];
+
   return json(highScores);
 };
