@@ -52,7 +52,7 @@
    ```sh
    git clone https://github.com/sifterstudios/ord-trener.git
    ```
-2. Install NPM packages
+2. Install packages
    ```sh
    yarn install
    ```
