@@ -19,14 +19,8 @@
   <p align="center">
     Small app to train your word-reading speed!
     <br />
-    <a href="https://github.com/sifterstudios/ord-trener"><strong>Explore the docs »</strong></a>
+    <a href="https://ord.sifterstudios.no"><strong>Try it out!</strong></a>
     <br />
-    <br />
-    <a href="https://github.com/sifterstudios/ord-trener">View Demo</a>
-    ·
-    <a href="https://github.com/sifterstudios/ord-trener/issues/new?labels=bug&template=bug-report---.md">Report Bug</a>
-    ·
-    <a href="https://github.com/sifterstudios/ord-trener/issues/new?labels=enhancement&template=feature-request---.md">Request Feature</a>
   </p>
 </div>
 
