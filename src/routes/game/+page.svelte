@@ -14,6 +14,7 @@
     correctWord: data.correctWord,
     alternatives: data.alternatives,
     feedback: data.feedback,
+    name: data.name,
     showCorrectWord: true,
   });
 
@@ -67,6 +68,9 @@
       countdownCorrectWordVisibility(2000);
     }, 1000);
   }
+  function handleRestart(_: CustomEvent) {
+    resetGame();
+  }
 
   // Countdown for the first word
   countdownCorrectWordVisibility(2000);
@@ -74,7 +78,7 @@
 
 {#if amountOfLives === 0}
   <div class="">
-    <GameOverCard score={currentScore} />
+    <GameOverCard score={currentScore} {name} on:restart={handleRestart} />
   </div>
 {:else}
   <div class="absolute top-20 left-0 w-full">

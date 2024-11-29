@@ -4,7 +4,8 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import validator from "validator";
   import Label from "../label/label.svelte";
-  let { score }: { score: number } = $props();
+  import { createEventDispatcher, onMount } from "svelte";
+  let { score, name }: { score: number; name: string } = $props();
 
   async function handleSubmitHighScore() {
     const name = document.getElementById("name") as HTMLInputElement;
@@ -25,33 +26,43 @@
     } else {
       console.log("Invalid name or score" + name.value + score);
     }
+
+    sendRestart();
+  }
+
+  const dispatch = createEventDispatcher();
+
+  function sendRestart() {
+    dispatch("restart", {});
   }
 
   function handleRestart() {
-    window.location.href = "/game";
+    sendRestart();
   }
 </script>
 
-<Card.Root class="w-[350px]">
-  <Card.Header>
-    <Card.Title>Game over!</Card.Title>
-    <Card.Description
-      >Hvis du vil, kan du skrive navnet ditt, så du kan se hvilken plassering
-      du har fått i high-score listen!</Card.Description
-    >
-  </Card.Header>
-  <Card.Content>
-    <form>
-      <div class="grid w-full items-center gap-4">
-        <div class="flex flex-col space-y-1.5">
-          <Label for="name">Navn</Label>
-          <Input id="name" placeholder="Hva kalles du?" />
+<div class="">
+  <Card.Root class="">
+    <Card.Header>
+      <Card.Title>Game over!</Card.Title>
+      <Card.Description
+        >Hvis du vil, kan du skrive navnet ditt, så du kan se hvilken plassering
+        du har fått i high-score listen!</Card.Description
+      >
+    </Card.Header>
+    <Card.Content>
+      <form>
+        <div class="grid w-full items-center gap-4">
+          <div class="flex flex-col space-y-1.5">
+            <Label for="name">Navn</Label>
+            <Input id="name" placeholder={name} />
+          </div>
         </div>
-      </div>
-    </form>
-  </Card.Content>
-  <Card.Footer class="flex justify-between">
-    <Button onclick={handleRestart} variant="outline">Spill på nytt!</Button>
-    <Button onclick={handleSubmitHighScore}>Submit</Button>
-  </Card.Footer>
-</Card.Root>
+      </form>
+    </Card.Content>
+    <Card.Footer class="flex justify-between">
+      <Button onclick={handleRestart} variant="outline">Spill på nytt!</Button>
+      <Button onclick={handleSubmitHighScore}>Send inn</Button>
+    </Card.Footer>
+  </Card.Root>
+</div>
