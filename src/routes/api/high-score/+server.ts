@@ -17,6 +17,7 @@ export const POST: RequestHandler = async ({ request, cookies }) => {
     name,
     score,
   );
+  console.log("High-score added successfully console.log message");
 
   return new Response(
     JSON.stringify({ status: "High-score added successfully" }),

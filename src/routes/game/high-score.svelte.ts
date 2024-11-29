@@ -17,9 +17,7 @@ class HighScore {
 
   calculateHighScore(level: number, timeTaken: number): number {
     const clampedTime = Math.min(timeTaken, this.maxTime);
-
     const levelMultiplier = Math.pow(1.5, level + 1) * this.levelScaleFactor;
-
     const timeMultiplier = Math.max(0.1, 1 - clampedTime / this.maxTime);
 
     console.log(

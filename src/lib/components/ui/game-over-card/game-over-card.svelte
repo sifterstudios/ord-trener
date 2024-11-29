@@ -2,15 +2,17 @@
   import { Button } from "$lib/components/ui/button/index.js";
   import * as Card from "$lib/components/ui/card/index.js";
   import { Input } from "$lib/components/ui/input/index.js";
-  import { Label } from "$lib/components/ui/label/index.js";
   import validator from "validator";
-
-  let {score}:{score:number} = $props();
+  import Label from "../label/label.svelte";
+  let { score }: { score: number } = $props();
 
   async function handleSubmitHighScore() {
-  const name = document.getElementById("name") as HTMLInputElement;
-  if (validator.isAlphanumeric(name.value) && validator.isNumeric(score)) {
-      await fetch("/api/highscore", {
+    const name = document.getElementById("name") as HTMLInputElement;
+    if (
+      validator.isAlphanumeric(name.value) &&
+      validator.isNumeric(score.toString())
+    ) {
+      await fetch("http://localhost:5173/api/high-score", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -20,10 +22,14 @@
           score: score,
         }),
       });
-  } else {
-    console.log("Invalid name or score" + name.value + score);
-  }
+    } else {
+      console.log("Invalid name or score" + name.value + score);
     }
+  }
+
+  function handleRestart() {
+    window.location.href = "/game";
+  }
 </script>
 
 <Card.Root class="w-[350px]">
@@ -39,13 +45,13 @@
       <div class="grid w-full items-center gap-4">
         <div class="flex flex-col space-y-1.5">
           <Label for="name">Navn</Label>
-          <Input id="name" placeholder="Hva kalles du?"/>
+          <Input id="name" placeholder="Hva kalles du?" />
         </div>
       </div>
     </form>
   </Card.Content>
   <Card.Footer class="flex justify-between">
-    <Button onclick={handleRestart}variant="outline">Spill på nytt!</Button>
+    <Button onclick={handleRestart} variant="outline">Spill på nytt!</Button>
     <Button onclick={handleSubmitHighScore}>Submit</Button>
   </Card.Footer>
 </Card.Root>
