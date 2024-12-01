@@ -4,12 +4,14 @@
   import { Input } from "$lib/components/ui/input/index.js";
   import validator from "validator";
   import Label from "../label/label.svelte";
-  import { createEventDispatcher, onMount } from "svelte";
-  let { score, name }: { score: number; name: string } = $props();
+  import { createEventDispatcher } from "svelte";
+  let { score, nameCookie }: { score: number; nameCookie: string } = $props();
+  let labelText = $state("Navn");
 
   async function handleSubmitHighScore() {
     const name = document.getElementById("name") as HTMLInputElement;
     if (
+      name.value.length > 0 &&
       validator.isAlphanumeric(name.value) &&
       validator.isNumeric(score.toString())
     ) {
@@ -23,11 +25,13 @@
           score: score,
         }),
       });
-    } else {
-      console.log("Invalid name or score" + name.value + score);
-    }
 
-    sendRestart();
+      sendRestart();
+    } else {
+      const label = document.getElementById("nameLabel");
+      label?.classList.add("text-destructive");
+      labelText = "Ugyldig navn! Prøv igjen!";
+    }
   }
 
   const dispatch = createEventDispatcher();
@@ -54,8 +58,8 @@
       <form>
         <div class="grid w-full items-center gap-4">
           <div class="flex flex-col space-y-1.5">
-            <Label for="name">Navn</Label>
-            <Input id="name" placeholder={name} />
+            <Label id="nameLabel" for="name">{labelText}</Label>
+            <Input id="name" placeholder={nameCookie} />
           </div>
         </div>
       </form>

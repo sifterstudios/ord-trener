@@ -1,18 +1,26 @@
 import type { PageServerLoad } from "./$types";
 
+interface GameWordData {
+  correctWord: string;
+  alternatives: string[];
+  feedback: string;
+  nameCookie: string;
+}
 // Fetch words from the API
-export const load: PageServerLoad = async ({ cookies }) => {
+export const load: PageServerLoad = async ({
+  cookies,
+}): Promise<GameWordData> => {
   await ingestWords();
   const response = await fetch("http://localhost:5173/api/random-word");
   const data = await response.json();
-  const name = cookies.get("name");
+  const nameC = cookies.get("name");
 
   return {
     correctWord: data.correctWord,
     alternatives: data.alternatives,
     feedback: "",
-    name: name,
-  };
+    nameCookie: nameC || "",
+  } as GameWordData;
 
   async function ingestWords() {
     const response = await fetch("http://localhost:5173/api/ingest-db", {
