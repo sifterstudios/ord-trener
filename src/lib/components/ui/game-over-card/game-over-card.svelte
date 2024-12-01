@@ -12,7 +12,7 @@
     const name = document.getElementById("name") as HTMLInputElement;
     if (
       name.value.length > 0 &&
-      validator.isAlphanumeric(name.value) &&
+      validator.isAlphanumeric(name.value, "nb-NO") &&
       validator.isNumeric(score.toString())
     ) {
       await fetch("http://localhost:5173/api/high-score", {
